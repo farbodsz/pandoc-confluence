@@ -1,0 +1,9 @@
+# Haskell Stack
+.stack-work/
+*~
+
+# Example output
+examples/output.*
+
+# Node (for testing examples with @mermaid-js/mermaid-cli)
+node_modules/

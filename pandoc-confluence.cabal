@@ -1,0 +1,57 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           pandoc-confluence
+version:        0.1.0.0
+synopsis:       Pandoc writer for Confluence's XHTML-based format.
+description:    Please see the README on GitHub at <https://github.com/farbodsz/pandoc-confluence#readme>
+category:       Text
+homepage:       https://github.com/farbodsz/pandoc-confluence#readme
+bug-reports:    https://github.com/farbodsz/pandoc-confluence/issues
+author:         Farbod Salamat-Zadeh
+maintainer:     Farbod Salamat-Zadeh
+copyright:      2022 Farbod Salamat-Zadeh
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/farbodsz/pandoc-confluence
+
+library
+  exposed-modules:
+      Confluence.Writer
+  other-modules:
+      Paths_pandoc_confluence
+  hs-source-dirs:
+      src
+  default-extensions:
+      OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-depends:
+      base >=4.7 && <5
+    , pandoc-types
+    , text
+  default-language: Haskell2010
+
+executable pandoc-confluence
+  main-is: Main.hs
+  other-modules:
+      Paths_pandoc_confluence
+  hs-source-dirs:
+      app
+  default-extensions:
+      OverloadedStrings
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , pandoc-confluence
+    , pandoc-types
+    , text
+  default-language: Haskell2010

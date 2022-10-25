@@ -1,0 +1,10 @@
+cradle:
+  stack:
+    - path: "./src"
+      component: "pandoc-confluence:lib"
+
+    - path: "./app/Main.hs"
+      component: "pandoc-confluence:exe:pandoc-confluence"
+
+    - path: "./app/Paths_pandoc_confluence.hs"
+      component: "pandoc-confluence:exe:pandoc-confluence"
