@@ -1,0 +1,44 @@
+# NOTE: stylish-haskell is only used for sorting imports
+
+steps:
+  - simple_align:
+      cases: false
+      top_level_patterns: false
+      records: false
+
+  - imports:
+      align: none
+      list_align: after_alias
+      pad_module_names: false
+      long_list_align: inline
+      empty_list_align: inherit
+      list_padding: 4
+      separate_lists: true
+      space_surround: true
+
+  - language_pragmas:
+      style: vertical
+      align: false
+      remove_redundant: true
+
+  # Remove trailing whitespace
+  - trailing_whitespace: {}
+
+columns: 80
+newline: native
+
+# Enable all
+language_extensions:
+  - -XBangPatterns
+  - -XExplicitForAll
+  - -XGADTs
+  - -XImplicitParams
+  - -XLambdaCase
+  - -XMultiWayIf
+  - -XPatternGuards
+  - -XQuasiQuotes
+  - -XRecordWildCards
+  - -XRecursiveDo
+  - -XTemplateHaskell
+  - -XTupleSections
+  - -XViewPatterns
