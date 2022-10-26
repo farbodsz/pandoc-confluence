@@ -16,18 +16,35 @@ import           Text.Pandoc.Definition         ( Inline(..) )
 data Element = Element
     { elTag   :: T.Text
     , elAttrs :: [(T.Text, Maybe T.Text)]
+    , elBody  :: [Inline]
     }
 
 elInline :: Element -> [Inline]
-elInline Element {..} = pure $ RawInline "html" $ T.concat
-    ["<" <> T.intercalate " " [elTag, htmlKvs] <> "/>"]
+elInline Element {..}
+    | null elBody = pure $ mkInline TagStartEnd
+    | otherwise   = mkInline TagStart : elBody <> [mkInline TagEnd]
   where
-    htmlKvs = T.intercalate " " $ fmap
+    mkInline :: TagType -> Inline
+    mkInline = RawInline "html" . renderTag elTag elAttrs
+
+
+data TagType = TagStart | TagEnd | TagStartEnd
+
+-- | Returns a HTML tag text based on the tag's type, name and attributes, e.g.
+-- @<ri:url ri:value=\"abc\">@ for a start tag.
+renderTag :: T.Text -> [(T.Text, Maybe T.Text)] -> TagType -> T.Text
+renderTag tag_name attrs tag_ty = case tag_ty of
+    TagStart    -> "<" <> tagText <> ">"
+    TagEnd      -> "</" <> tag_name <> ">"
+    TagStartEnd -> "<" <> tagText <> "/>"
+  where
+    tagText   = T.intercalate " " [tag_name, attrsText]
+    attrsText = T.intercalate " " $ map
         (\(k, mv) -> case mv of
             Nothing -> k
             Just v  -> k <> "=\"" <> v <> "\""
         )
-        elAttrs
+        attrs
 
 --------------------------------------------------------------------------------
 -- Confluence types
@@ -44,14 +61,12 @@ data ConfluenceRi
     | RiUrl T.Text
     -- ^ URL
 
--- | Outputs a Confluence resource as a list of inlines.
 riInline :: ConfluenceRi -> [Inline]
 riInline = elInline . riElement
 
--- | Element representation of a Confluence resource identifier.
 riElement :: ConfluenceRi -> Element
 riElement (RiAttachment fname) =
-    Element "ri:attachment" [("ri:filename", Just fname)]
-riElement (RiUrl url) = Element "ri:url" [("ri:value", Just url)]
+    Element "ri:attachment" [("ri:filename", Just fname)] []
+riElement (RiUrl url) = Element "ri:url" [("ri:value", Just url)] []
 
 --------------------------------------------------------------------------------
