@@ -17,6 +17,7 @@ dependencies:
 
 default-extensions:
   - OverloadedStrings
+  - RecordWildCards
 
 ghc-options:
   - -Wall

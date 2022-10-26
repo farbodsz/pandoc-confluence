@@ -4,6 +4,7 @@ module Confluence.Writer
     ( inlineFilter
     ) where
 
+import           Confluence.Element
 import qualified Data.Text                     as T
 import           Text.Pandoc.Definition
 
@@ -19,21 +20,18 @@ import           Text.Pandoc.Definition
 inlineFilter :: Inline -> [Inline]
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
     where attrs = ("", [], [("style", "text-decoration: line-through;")])
-inlineFilter (Image _ _ (url, _)) = withinTag "ac:image"
-                                              (mkInlineHtml innerHtml)
+inlineFilter (Image _ _ (url, _)) = withinTag "ac:image" innerInline
   where
-    innerHtml = if "http" `T.isPrefixOf` url
-        then T.concat ["<ri:attachment ri:filename=\"", url, "\"/>"]
-        else T.concat ["<ri:url ri:value=\"", url, "\"/>"]
+    innerInline = if "http" `T.isPrefixOf` url
+        then riInline $ RiAttachment url
+        else riInline $ RiUrl url
 inlineFilter i = pure i
 
---------------------------------------------------------------------------------
-
-withinTag :: T.Text -> Inline -> [Inline]
-withinTag tag inner =
-    [mkInlineHtml ("<" <> tag <> ">"), inner, mkInlineHtml ("</" <> tag <> ">")]
-
-mkInlineHtml :: T.Text -> Inline
-mkInlineHtml = RawInline "html"
+withinTag :: T.Text -> [Inline] -> [Inline]
+withinTag tag inlines = concat
+    [ [RawInline "html" ("<" <> tag <> ">")]
+    , inlines
+    , [RawInline "html" ("</" <> tag <> ">")]
+    ]
 
 --------------------------------------------------------------------------------

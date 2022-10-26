@@ -26,6 +26,7 @@ source-repository head
 
 library
   exposed-modules:
+      Confluence.Element
       Confluence.Writer
   other-modules:
       Paths_pandoc_confluence
@@ -33,6 +34,7 @@ library
       src
   default-extensions:
       OverloadedStrings
+      RecordWildCards
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
@@ -48,6 +50,7 @@ executable pandoc-confluence
       app
   default-extensions:
       OverloadedStrings
+      RecordWildCards
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
