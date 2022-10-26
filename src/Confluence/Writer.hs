@@ -20,18 +20,10 @@ import           Text.Pandoc.Definition
 inlineFilter :: Inline -> [Inline]
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
     where attrs = ("", [], [("style", "text-decoration: line-through;")])
-inlineFilter (Image _ _ (url, _)) = withinTag "ac:image" innerInline
-  where
-    innerInline = if "http" `T.isPrefixOf` url
-        then riInline $ RiAttachment url
-        else riInline $ RiUrl url
+inlineFilter (Image _ _ (url, _)) =
+    toInline . AcImage $ if "http" `T.isPrefixOf` url
+        then toInline $ RiAttachment url
+        else toInline $ RiUrl url
 inlineFilter i = pure i
-
-withinTag :: T.Text -> [Inline] -> [Inline]
-withinTag tag inlines = concat
-    [ [RawInline "html" ("<" <> tag <> ">")]
-    , inlines
-    , [RawInline "html" ("</" <> tag <> ">")]
-    ]
 
 --------------------------------------------------------------------------------

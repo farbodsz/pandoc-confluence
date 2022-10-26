@@ -2,8 +2,9 @@
 
 -- | Elements part of Confluence's XHTML-based format.
 module Confluence.Element
-    ( ConfluenceRi(..)
-    , riInline
+    ( ConfluenceAc(..)
+    , ConfluenceRi(..)
+    , ToElement(..)
     ) where
 
 import qualified Data.Text                     as T
@@ -46,8 +47,23 @@ renderTag tag_name attrs tag_ty = case tag_ty of
         )
         attrs
 
+
+class ToElement a where
+    toElement :: a -> Element
+
+    toInline :: a -> [Inline]
+    toInline = elInline . toElement
+
 --------------------------------------------------------------------------------
 -- Confluence types
+
+-- | Confluence 'ac' tags.
+--
+data ConfluenceAc = AcImage [Inline]
+
+instance ToElement ConfluenceAc where
+    toElement (AcImage is) = Element "ac:image" [] is
+
 
 -- | Confluence resource identifier.
 --
@@ -61,12 +77,9 @@ data ConfluenceRi
     | RiUrl T.Text
     -- ^ URL
 
-riInline :: ConfluenceRi -> [Inline]
-riInline = elInline . riElement
-
-riElement :: ConfluenceRi -> Element
-riElement (RiAttachment fname) =
-    Element "ri:attachment" [("ri:filename", Just fname)] []
-riElement (RiUrl url) = Element "ri:url" [("ri:value", Just url)] []
+instance ToElement ConfluenceRi where
+    toElement (RiAttachment fname) =
+        Element "ri:attachment" [("ri:filename", Just fname)] []
+    toElement (RiUrl url) = Element "ri:url" [("ri:value", Just url)] []
 
 --------------------------------------------------------------------------------
