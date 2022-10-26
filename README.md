@@ -22,7 +22,13 @@ develop another process to publish the output file to a Confluence page.
 
 ## Resources
 
-- [Documentation: Pandoc filters](https://pandoc.org/filters.html)
-- [Documentation: Confluence Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
+### Documentation
+
+- [Haskell: `pandoc-types` `Text.Pandoc.Definition`](https://hackage.haskell.org/package/pandoc-types-1.22.2.1/docs/Text-Pandoc-Definition.html)
+- [Pandoc: Filters](https://pandoc.org/filters.html)
+- [Atlassian: Confluence Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
+
+### Similar projects 
+
 - [jpbarrette/pandoc-confluence-writer](https://github.com/jpbarrette/pandoc-confluence-writer):
   Lua filter for Confluence XHTML
