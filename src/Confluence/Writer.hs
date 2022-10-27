@@ -21,9 +21,9 @@ inlineFilter :: Inline -> [Inline]
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
     where attrs = ("", [], [("style", "text-decoration: line-through;")])
 inlineFilter (Image _ _ (url, _)) =
-    toInline . AcImage $ if "http" `T.isPrefixOf` url
-        then toInline $ RiAttachment url
-        else toInline $ RiUrl url
+    toInline . AcImage . toInline $ if "http" `T.isPrefixOf` url
+        then RiUrl url
+        else RiAttachment url
 inlineFilter i = pure i
 
 --------------------------------------------------------------------------------
