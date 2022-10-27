@@ -39,7 +39,7 @@ renderTag tag_name attrs tag_ty = case tag_ty of
     TagEnd      -> "</" <> tag_name <> ">"
     TagStartEnd -> "<" <> tagText <> "/>"
   where
-    tagText   = T.intercalate " " [tag_name, attrsText]
+    tagText   = T.intercalate " " $ filter (not . T.null) [tag_name, attrsText]
     attrsText = T.intercalate " " $ map
         (\(k, mv) -> case mv of
             Nothing -> k
