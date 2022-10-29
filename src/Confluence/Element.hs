@@ -2,67 +2,63 @@
 
 -- | Elements part of Confluence's XHTML-based format.
 module Confluence.Element
-    ( ConfluenceAc(..)
+    ( ToInline(..)
     , ConfluenceRi(..)
-    , ToElement(..)
+    , ConfluenceInline(..)
     ) where
 
+import           Confluence.Html
+import           Confluence.Tag
 import qualified Data.Text                     as T
-import           Text.Pandoc.Definition         ( Inline(..) )
+import           Text.Pandoc.Definition         ( Inline(RawInline) )
 
 --------------------------------------------------------------------------------
--- Element
+-- Confluence elements
 
--- | Helper type for creating a custom HTML element (tag name; attributes).
-data Element = Element
-    { elTag   :: T.Text
-    , elAttrs :: [(T.Text, Maybe T.Text)]
-    , elBody  :: [Inline]
-    }
-
-elInline :: Element -> [Inline]
-elInline Element {..}
-    | null elBody = pure $ mkInline TagStartEnd
-    | otherwise   = mkInline TagStart : elBody <> [mkInline TagEnd]
-  where
-    mkInline :: TagType -> Inline
-    mkInline = RawInline "html" . renderTag elTag elAttrs
-
-
-data TagType = TagStart | TagEnd | TagStartEnd
-
--- | Returns a HTML tag text based on the tag's type, name and attributes, e.g.
--- @<ri:url ri:value=\"abc\">@ for a start tag.
-renderTag :: T.Text -> [(T.Text, Maybe T.Text)] -> TagType -> T.Text
-renderTag tag_name attrs tag_ty = case tag_ty of
-    TagStart    -> "<" <> tagText <> ">"
-    TagEnd      -> "</" <> tag_name <> ">"
-    TagStartEnd -> "<" <> tagText <> "/>"
-  where
-    tagText   = T.intercalate " " $ filter (not . T.null) [tag_name, attrsText]
-    attrsText = T.intercalate " " $ map
-        (\(k, mv) -> case mv of
-            Nothing -> k
-            Just v  -> k <> "=\"" <> v <> "\""
-        )
-        attrs
-
-
-class ToElement a where
-    toElement :: a -> Element
-
-    toInline :: a -> [Inline]
-    toInline = elInline . toElement
-
---------------------------------------------------------------------------------
--- Confluence types
-
--- | Confluence 'ac' tags.
+-- | Confluence resource identifier.
 --
-data ConfluenceAc = AcImage [Inline]
+-- Resource identifiers are used to describe "links" or "references" to
+-- resources in the storage format. Examples of resources include pages, blog
+-- posts, comments, shortcuts, images and so forth.
+--
+data ConfluenceRi
+    = RiAttachment T.Text
+    -- ^ Attachment filename
+    | RiUrl T.Text
+    -- ^ URL
 
-instance ToElement ConfluenceAc where
-    toElement (AcImage is) = Element "ac:image" [] is
+instance ToInline ConfluenceRi where
+    toInline (RiAttachment fname) = toInline $ riAttachment fname
+    toInline (RiUrl        url  ) = toInline $ riUrl url
+
+
+-- | Inline Confluence elements
+data ConfluenceInline = AcImage [Inline]
+
+instance ToInline ConfluenceInline where
+    toInline (AcImage is) = toInline $ Element "ac:image" [] is
+
+--------------------------------------------------------------------------------
+-- Instance definitions
+
+class ToInline a where
+    toInline :: a -> [Inline]
+
+instance ToInline Inline where
+    toInline = pure
+
+instance ToInline Html where
+    toInline = pure . RawInline "html"
+
+instance ToInline a => ToInline (Element a) where
+    toInline Element {..} = if null elBody
+        then mkTag TagStartEnd
+        else
+            let inlines = concatMap toInline elBody
+            in  mkTag TagStart <> inlines <> mkTag TagEnd
+      where
+        mkTag :: TagType -> [Inline]
+        mkTag = toInline . renderTag elTag elAttrs
 
 
 -- | Confluence resource identifier.
@@ -77,9 +73,16 @@ data ConfluenceRi
     | RiUrl T.Text
     -- ^ URL
 
-instance ToElement ConfluenceRi where
-    toElement (RiAttachment fname) =
-        Element "ri:attachment" [("ri:filename", Just fname)] []
-    toElement (RiUrl url) = Element "ri:url" [("ri:value", Just url)] []
+instance ToInline ConfluenceRi where
+    toInline (RiAttachment fname) =
+        toInline $ htmlTag "ri:attachment" ! ("ri:filename", Just fname)
+    toInline (RiUrl url) = toInline $ htmlTag "ri:url" ! ("ri:value", Just url)
+
+
+-- | Inline Confluence elements
+data ConfluenceInline = AcImage [Inline]
+
+instance ToInline ConfluenceInline where
+    toInline (AcImage is) = toInline $ Element "ac:image" [] is
 
 --------------------------------------------------------------------------------

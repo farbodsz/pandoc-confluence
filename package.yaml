@@ -4,7 +4,9 @@ synopsis: Pandoc writer for Confluence's XHTML-based format.
 category: Text
 github: "farbodsz/pandoc-confluence"
 license: MIT
-description: Please see the README on GitHub at <https://github.com/farbodsz/pandoc-confluence#readme>
+description:
+  Please see the README on GitHub at
+  <https://github.com/farbodsz/pandoc-confluence#readme>
 author: "Farbod Salamat-Zadeh"
 copyright: "2022 Farbod Salamat-Zadeh"
 extra-source-files:
@@ -18,6 +20,7 @@ dependencies:
 default-extensions:
   - OverloadedStrings
   - RecordWildCards
+  - TypeSynonymInstances
 
 ghc-options:
   - -Wall
