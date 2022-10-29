@@ -16,9 +16,44 @@ Writing XHTML by hand is obviously impractical, but writing Markdown is fun.
 With a way to convert from Markdown to Confluence's XHTML, we would be able to
 develop another process to publish the output file to a Confluence page.
 
-## Dependencies
+## Todo list
 
-- [`@mermaid-js/mermaid-cli`](https://www.npmjs.com/package/@mermaid-js/mermaid-cli)
+- [ ] Inline text
+  - [x] Basic inline formatting
+    - [x] Strike-through
+  - [ ] Special confluence links
+    - [ ] User mentions
+    - [ ] JIRA link
+  - [ ] Other formatting options
+    - [ ] Status badge
+- [x] Block text
+  - [ ] List formats
+    - [ ] Task list
+  - [ ] Note formats
+    - [ ] Note
+    - [ ] Info
+    - [ ] Tip
+    - [ ] Warning
+  - [ ] Expandable text block
+- [ ] Document organisation
+  - [ ] Table of contents
+    - [ ] Basic
+    - [ ] With all the Confluence options
+- [ ] Images
+  - [x] Attached image
+  - [x] External image
+  - [ ] Image attributes
+- [ ] Code blocks
+  - [x] Simple
+  - [ ] With all the Confluence options
+- [ ] Character escaping
+- [ ] Links
+  - [ ] To another Confluence page
+  - [ ] To an attachment
+  - [ ] To an external site
+  - [ ] To an anchor (same page)
+  - [ ] With embedded image as body
+  - [ ] Error on any markup not permitted in Confluence link bodies
 
 ## Resources
 
@@ -27,8 +62,9 @@ develop another process to publish the output file to a Confluence page.
 - [Haskell: `pandoc-types` `Text.Pandoc.Definition`](https://hackage.haskell.org/package/pandoc-types-1.22.2.1/docs/Text-Pandoc-Definition.html)
 - [Pandoc: Filters](https://pandoc.org/filters.html)
 - [Atlassian: Confluence Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
+- [Google Groups: multiple filters in Pandoc](https://groups.google.com/g/pandoc-discuss/c/vHjIOej7L0Q?pli=1)
 
-### Similar projects 
+### Similar projects
 
 - [jpbarrette/pandoc-confluence-writer](https://github.com/jpbarrette/pandoc-confluence-writer):
   Lua filter for Confluence XHTML
