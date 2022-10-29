@@ -34,6 +34,7 @@ failure() {
 EXECUTABLE="pandoc-confluence"
 OUTPUT_FILE="/tmp/pandoc-confluence-test-output.html"
 
+set -e
 echo "Building..."
 stack build
 FILTER_PATH=$(stack exec -- whereis $EXECUTABLE | awk -F ': ' '{ print $2 }')
@@ -55,6 +56,9 @@ echo ""
 echo "Running tests..."
 echo ""
 
+passed=0
+failed=0
+
 for input_file in ./tests/*.md; do
   _basename="${input_file##*/}"
   test_name="${input_file%.*}"
@@ -66,6 +70,7 @@ for input_file in ./tests/*.md; do
 
   if cmp --silent "$OUTPUT_FILE" "$expected_output_file"; then
     success "PASSED"
+    passed=$((passed + 1))
   else
     failure "FAILED"
     warn "Expected:"
@@ -73,8 +78,15 @@ for input_file in ./tests/*.md; do
     warn "Got:"
     cat "$OUTPUT_FILE"
     echo ""
-    exit 1
+    failed=$((failed + 1))
   fi
   echo ""
 done
-exit 0
+
+if [ $failed -gt 0 ]; then
+  failure "Failed ${failed} / $((passed + failed)) tests!"
+  exit 1
+else
+  success "All ${passed} tests passed!"
+  exit 0
+fi

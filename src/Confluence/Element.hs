@@ -3,14 +3,18 @@
 -- | Elements part of Confluence's XHTML-based format.
 module Confluence.Element
     ( ToInline(..)
+    , ToBlock(..)
     , ConfluenceRi(..)
     , ConfluenceInline(..)
+    , ConfluenceBlock(..)
     ) where
 
 import           Confluence.Html
 import           Confluence.Tag
 import qualified Data.Text                     as T
-import           Text.Pandoc.Definition         ( Inline(RawInline) )
+import           Text.Pandoc.Definition         ( Block(Plain, RawBlock)
+                                                , Inline(RawInline)
+                                                )
 
 --------------------------------------------------------------------------------
 -- Confluence elements
@@ -38,6 +42,16 @@ data ConfluenceInline = AcImage [Inline]
 instance ToInline ConfluenceInline where
     toInline (AcImage is) = toInline $ Element "ac:image" [] is
 
+
+-- | Block Confluence elements
+data ConfluenceBlock = AcCodeBlock T.Text T.Text
+    -- ^ Language, code block
+
+instance ToBlock ConfluenceBlock where
+    toBlock (AcCodeBlock lang code) = toBlock . toInline $ acStructuredMacro
+        "code"
+        [acParameter "language" lang, acPlainTextBody code]
+
 --------------------------------------------------------------------------------
 -- Instance definitions
 
@@ -61,28 +75,16 @@ instance ToInline a => ToInline (Element a) where
         mkTag = toInline . renderTag elTag elAttrs
 
 
--- | Confluence resource identifier.
---
--- Resource identifiers are used to describe "links" or "references" to
--- resources in the storage format. Examples of resources include pages, blog
--- posts, comments, shortcuts, images and so forth.
---
-data ConfluenceRi
-    = RiAttachment T.Text
-    -- ^ Attachment filename
-    | RiUrl T.Text
-    -- ^ URL
+class ToBlock a where
+    toBlock :: a -> Block
 
-instance ToInline ConfluenceRi where
-    toInline (RiAttachment fname) =
-        toInline $ htmlTag "ri:attachment" ! ("ri:filename", Just fname)
-    toInline (RiUrl url) = toInline $ htmlTag "ri:url" ! ("ri:value", Just url)
+instance ToBlock Block where
+    toBlock = id
 
+instance ToBlock Html where
+    toBlock = RawBlock "html"
 
--- | Inline Confluence elements
-data ConfluenceInline = AcImage [Inline]
-
-instance ToInline ConfluenceInline where
-    toInline (AcImage is) = toInline $ Element "ac:image" [] is
+instance ToInline a => ToBlock [a] where
+    toBlock es = Plain $ concatMap toInline es
 
 --------------------------------------------------------------------------------

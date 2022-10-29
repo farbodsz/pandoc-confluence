@@ -3,7 +3,7 @@
 *~
 
 # Example output
-examples/output.*
+scratch/*
 
 # Node (for testing examples with @mermaid-js/mermaid-cli)
 node_modules/

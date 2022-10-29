@@ -1,0 +1,2 @@
+# Don't include HTML tests in language stats
+tests/*.html -linguist-vendored

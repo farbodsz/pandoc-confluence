@@ -5,12 +5,17 @@ module Main
     ) where
 
 import           Confluence.Writer
+import           Text.Pandoc.Definition         ( Pandoc )
+import           Text.Pandoc.Generic            ( bottomUp )
 import           Text.Pandoc.JSON               ( ToJSONFilter(toJSONFilter) )
 
 --------------------------------------------------------------------------------
 
 main :: IO ()
-main = do
-    toJSONFilter inlineFilter
+main = toJSONFilter pandocFilter
+
+pandocFilter :: Pandoc -> Pandoc
+pandocFilter = bottomUp (concatMap (pure . blockFilter))
+    . bottomUp (concatMap inlineFilter)
 
 --------------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 --------------------------------------------------------------------------------
 
 module Confluence.Writer
-    ( inlineFilter
+    ( blockFilter
+    , inlineFilter
     ) where
 
 import           Confluence.Element
@@ -10,12 +11,27 @@ import           Text.Pandoc.Definition
 
 --------------------------------------------------------------------------------
 
--- | Inlines in Confluence XHTML are rendered differently to Pandoc's default
--- HTML output. These are:
+-- | @blockFilter block@ transforms a Pandoc 'Block' into an equivalent
+-- Confluence XHTML representation (a 'Block').
 --
---   * Strikethroughs: @span@ with @text-decoration@ instead of the @del@ tag
+-- Examples of Confluence XHTML blocks, which differ from Pandoc's default HTML
+-- output, are:
 --
---     > <span style="text-decoration: line-through;">foo bar</span>
+--   * Code blocks: rendered with the @ac:structured-macro@ tag
+--
+blockFilter :: Block -> Block
+blockFilter (CodeBlock _attrs txt) = toBlock $ AcCodeBlock "bash" txt
+blockFilter b                      = b
+
+
+-- | @inlineFilter inline@ transforms a Pandoc 'Inline' into an equivalent
+-- Confluence XHTML representation (as a list of 'Inline's).
+--
+-- Examples of Confluence XHTML inlines, which differ from Pandoc's default HTML
+-- output, are:
+--
+--   * Strikethroughs: rendered as @span@s
+--   * Images: rendered with @ac:image@
 --
 inlineFilter :: Inline -> [Inline]
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
