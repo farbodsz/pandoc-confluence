@@ -1,7 +1,6 @@
 name: Haskell CI
 
-on:
-  [push, pull_request]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -24,6 +23,12 @@ jobs:
         run: |
           export PATH=$HOME/.local/bin:$PATH
           stack --stack-yaml=${{ matrix.resolver }}.yaml --install-ghc setup
+
+      - name: Install Brittany
+        run: |
+          export PATH=$HOME/.local/bin:$PATH
+          stack --stack-yaml=${{ matrix.resolver }}.yaml install brittany
+          brittany **/*.hs -c
 
       - name: Build
         run: |
