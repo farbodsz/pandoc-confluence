@@ -7,6 +7,7 @@ module Confluence.Writer
 
 import           Confluence.Block
 import           Confluence.Inline
+import           Confluence.Params
 import           Control.Monad                  ( mfilter )
 import           Data.Bifunctor                 ( Bifunctor(first) )
 import qualified Data.Text                     as T
@@ -17,13 +18,14 @@ import           Text.Pandoc.Definition
 -- | @blockFilter block@ transforms a Pandoc 'Block' into an equivalent
 -- Confluence XHTML representation (a 'Block').
 --
--- Examples of Confluence XHTML blocks, which differ from Pandoc's default HTML
--- output, are:
---
---   * Code blocks: rendered with the @ac:structured-macro@ tag
---
+-- A code block is only transformed if it is marked with a valid programming
+-- language, otherwise the block is rendered as normal.
 blockFilter :: Block -> [Block]
-blockFilter (CodeBlock _attrs txt) = toBlock $ AcCodeBlock "bash" txt
+blockFilter b@(CodeBlock attrs body) = case getCodeBlockLang attrs of
+    Nothing   -> pure b
+    Just lang -> toBlock $ AcCodeBlock
+        (CodeBlockParams lang Nothing Nothing Nothing Nothing Nothing)
+        body
 blockFilter (BlockQuote (b : bs)) =
     let (m_box_ty, rest_b) = first (mfilter isValidBoxTy . fmap extractTag)
                                    (splitBlockOnFirstStr b)
@@ -33,9 +35,7 @@ blockFilter (BlockQuote (b : bs)) =
   where
     extractTag   = T.toLower . T.strip . head . T.split (== ':')
     isValidBoxTy = flip elem ["note", "info", "tip", "warning"]
-
 blockFilter b = pure b
-
 
 -- | @inlineFilter inline@ transforms a Pandoc 'Inline' into an equivalent
 -- Confluence XHTML representation (as a list of 'Inline's).
@@ -57,13 +57,19 @@ inlineFilter i = pure i
 
 --------------------------------------------------------------------------------
 
--- | @splitBlockOnFirstStr block@ returns a the first string of a block,
--- followed by the rest of the block (i.e. block, excluding this first string).
+-- | @splitBlockOnFirstStr block@ returns the first string of a block, followed
+-- by the rest of the block (i.e. block, excluding this first string).
 splitBlockOnFirstStr :: Block -> (Maybe T.Text, Block)
 splitBlockOnFirstStr (Plain ((Str t) : is)) = (Just t, Plain is)
 splitBlockOnFirstStr (Para  ((Str t) : is)) = (Just t, Para is)
 splitBlockOnFirstStr (LineBlock (((Str t) : is) : iss)) =
     (Just t, LineBlock (is : iss))
 splitBlockOnFirstStr b = (Nothing, b)
+
+-- | @getCodeBlockLang attributes@ returns the language string if it is the only
+-- class in the code block's attributes.
+getCodeBlockLang :: Attr -> Maybe T.Text
+getCodeBlockLang (_, [cls], _) = Just cls
+getCodeBlockLang (_, _    , _) = Nothing
 
 --------------------------------------------------------------------------------

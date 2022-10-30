@@ -5,6 +5,7 @@ module Confluence.Html
     , Html
     , TagType(..)
     , renderTag
+    , showHtml
     ) where
 
 import qualified Data.Text                     as T
@@ -44,5 +45,8 @@ renderTag tag_name attrs tag_ty = case tag_ty of
             Just v  -> k <> "=\"" <> v <> "\""
         )
         attrs
+
+showHtml :: Show a => a -> Html
+showHtml = T.toLower . T.pack . show
 
 --------------------------------------------------------------------------------

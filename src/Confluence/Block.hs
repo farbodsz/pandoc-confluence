@@ -7,6 +7,7 @@ module Confluence.Block
 
 import           Confluence.Html
 import           Confluence.Inline              ( ToInline(..) )
+import           Confluence.Params              ( ConfluenceParams(..), CodeBlockParams )
 import           Confluence.Tag
 import qualified Data.Text                     as T
 import           Text.Pandoc.Builder            ( Block(RawBlock) )
@@ -39,15 +40,15 @@ instance ToBlock a => ToBlock (Element a) where
 
 -- | Block Confluence elements
 data ConfluenceBlock
-    = AcCodeBlock T.Text T.Text
+    = AcCodeBlock CodeBlockParams T.Text
     -- ^ Language, code block
     | AcBoxedText T.Text [Block]
     -- ^ Type
 
 instance ToBlock ConfluenceBlock where
-    toBlock (AcCodeBlock lang code) = toBlock . toInline $ acStructuredMacro
+    toBlock (AcCodeBlock params code) = toBlock . toInline $ acStructuredMacro
         "code"
-        [acParam "language" lang, acPlainTextBody code]
+        (acParams (toParams params) <> [acPlainTextBody code])
     toBlock (AcBoxedText box_ty bs) =
         toBlock $ acStructuredMacro box_ty [acRichTextBody bs]
 

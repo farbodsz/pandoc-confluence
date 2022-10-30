@@ -6,6 +6,7 @@ module Confluence.Tag
     ( acImage
     , acStructuredMacro
     , acParam
+    , acParams
     , acPlainTextBody
     , acRichTextBody
     , riAttachment
@@ -27,6 +28,9 @@ acStructuredMacro name = Element
 
 acParam :: T.Text -> T.Text -> Element T.Text
 acParam name value = Element "ac:parameter" [("ac:name", Just name)] [value]
+
+acParams :: [(T.Text, T.Text)] -> [Element T.Text]
+acParams = map (uncurry acParam)
 
 acPlainTextBody :: T.Text -> Element T.Text
 acPlainTextBody txt = Element "ac:plain-text-body" [] ["<![CDATA[", txt, "]]>"]

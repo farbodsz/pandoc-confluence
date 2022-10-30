@@ -29,6 +29,7 @@ library
       Confluence.Block
       Confluence.Html
       Confluence.Inline
+      Confluence.Params
       Confluence.Tag
       Confluence.Writer
   other-modules:
