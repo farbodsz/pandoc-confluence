@@ -21,9 +21,8 @@ acStructuredMacro name = Element
     "ac:structured-macro"
     [("ac:name", Just name), ("ac:schema-version", Just "1")]
 
-acParameter :: T.Text -> T.Text -> Element T.Text
-acParameter name value =
-    Element "ac:parameter" [("ac:name", Just name)] [value]
+acParam :: T.Text -> T.Text -> Element T.Text
+acParam name value = Element "ac:parameter" [("ac:name", Just name)] [value]
 
 acPlainTextBody :: T.Text -> Element T.Text
 acPlainTextBody txt = Element "ac:plain-text-body" [] ["<![CDATA[", txt, "]]>"]
