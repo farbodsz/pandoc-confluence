@@ -6,6 +6,7 @@ module Confluence.Tag
     ( acStructuredMacro
     , acParameter
     , acPlainTextBody
+    , acRichTextBody
     , riAttachment
     , riUrl
     ) where
@@ -26,6 +27,9 @@ acParameter name value =
 
 acPlainTextBody :: T.Text -> Element T.Text
 acPlainTextBody txt = Element "ac:plain-text-body" [] ["<![CDATA[", txt, "]]>"]
+
+acRichTextBody :: [a] -> Element a
+acRichTextBody = Element "ac:rich-text-body" []
 
 riAttachment :: T.Text -> Element T.Text
 riAttachment fname = Element "ri:attachment" [("ri:filename", Just fname)] []

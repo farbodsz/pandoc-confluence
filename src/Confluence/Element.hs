@@ -44,13 +44,18 @@ instance ToInline ConfluenceInline where
 
 
 -- | Block Confluence elements
-data ConfluenceBlock = AcCodeBlock T.Text T.Text
+data ConfluenceBlock
+    = AcCodeBlock T.Text T.Text
     -- ^ Language, code block
+    | AcBoxedText T.Text [Block]
+    -- ^ Type
 
 instance ToBlock ConfluenceBlock where
     toBlock (AcCodeBlock lang code) = toBlock . toInline $ acStructuredMacro
         "code"
         [acParameter "language" lang, acPlainTextBody code]
+    toBlock (AcBoxedText box_ty bs) =
+        toBlock $ acStructuredMacro box_ty [acRichTextBody bs]
 
 --------------------------------------------------------------------------------
 -- Instance definitions
@@ -84,5 +89,13 @@ instance ToBlock Html where
 
 instance ToInline a => ToBlock [a] where
     toBlock = pure . Plain . concatMap toInline
+
+instance ToBlock a => ToBlock (Element a) where
+    toBlock Element {..}
+        | null elBody = mkTag TagStartEnd
+        | otherwise   = mkTag TagStart <> bodyBlock <> mkTag TagEnd
+      where
+        bodyBlock = concatMap toBlock elBody
+        mkTag     = toBlock . renderTag elTag elAttrs
 
 --------------------------------------------------------------------------------

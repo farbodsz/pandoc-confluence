@@ -16,7 +16,7 @@ Writing XHTML by hand is obviously impractical, but writing Markdown is fun.
 With a way to convert from Markdown to Confluence's XHTML, we would be able to
 develop another process to publish the output file to a Confluence page.
 
-## Todo list
+## Supported features
 
 - [ ] Inline text
   - [x] Basic inline formatting
@@ -30,10 +30,8 @@ develop another process to publish the output file to a Confluence page.
   - [ ] List formats
     - [ ] Task list
   - [ ] Note formats
-    - [ ] Note
-    - [ ] Info
-    - [ ] Tip
-    - [ ] Warning
+    - [x] Note, info, tip, warning
+    - [ ] Additional Confluence options (e.g. "title" parameter)
   - [ ] Expandable text block
 - [ ] Document organisation
   - [ ] Table of contents
@@ -54,6 +52,8 @@ develop another process to publish the output file to a Confluence page.
   - [ ] To an anchor (same page)
   - [ ] With embedded image as body
   - [ ] Error on any markup not permitted in Confluence link bodies
+
+See [SYNTAX](./SYNTAX.md) for how to represent these in "Confluence markdown".
 
 ## Dependencies
 

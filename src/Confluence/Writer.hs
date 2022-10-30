@@ -6,6 +6,8 @@ module Confluence.Writer
     ) where
 
 import           Confluence.Element
+import           Control.Monad                  ( mfilter )
+import           Data.Bifunctor                 ( Bifunctor(first) )
 import qualified Data.Text                     as T
 import           Text.Pandoc.Definition
 
@@ -21,7 +23,17 @@ import           Text.Pandoc.Definition
 --
 blockFilter :: Block -> [Block]
 blockFilter (CodeBlock _attrs txt) = toBlock $ AcCodeBlock "bash" txt
-blockFilter b                      = pure b
+blockFilter (BlockQuote (b : bs)) =
+    let (m_box_ty, rest_b) = first (mfilter isValidBoxTy . fmap extractTag)
+                                   (splitBlockOnFirstStr b)
+    in  case m_box_ty of
+            Nothing     -> b : bs
+            Just box_ty -> toBlock $ AcBoxedText box_ty (rest_b : bs)
+  where
+    extractTag   = T.toLower . T.strip . head . T.split (== ':')
+    isValidBoxTy = flip elem ["note", "info", "tip", "warning"]
+
+blockFilter b = pure b
 
 
 -- | @inlineFilter inline@ transforms a Pandoc 'Inline' into an equivalent
@@ -41,5 +53,16 @@ inlineFilter (Image _ _ (url, _)) =
         then RiUrl url
         else RiAttachment url
 inlineFilter i = pure i
+
+--------------------------------------------------------------------------------
+
+-- | @splitBlockOnFirstStr block@ returns a the first string of a block,
+-- followed by the rest of the block (i.e. block, excluding this first string).
+splitBlockOnFirstStr :: Block -> (Maybe T.Text, Block)
+splitBlockOnFirstStr (Plain ((Str t) : is)) = (Just t, Plain is)
+splitBlockOnFirstStr (Para  ((Str t) : is)) = (Just t, Para is)
+splitBlockOnFirstStr (LineBlock (((Str t) : is) : iss)) =
+    (Just t, LineBlock (is : iss))
+splitBlockOnFirstStr b = (Nothing, b)
 
 --------------------------------------------------------------------------------
