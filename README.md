@@ -1,7 +1,25 @@
-# Pandoc Confluence Writer
+<h1>Pandoc Confluence Writer</h1>
 
 Custom [Pandoc](https://pandoc.org/) writer for Confluence's
 [XHTML-based storage format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html).
+
+<a href="https://www.repostatus.org/#wip"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." /></a>
+
+<!-- NOTE: run doctoc on this document to generate contents page -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Motivation](#motivation)
+- [Supported features](#supported-features)
+- [Dependencies](#dependencies)
+- [Installation](#installation)
+  - [Building from source](#building-from-source)
+  - [Static binary](#static-binary)
+- [Resources](#resources)
+  - [Documentation](#documentation)
+  - [Similar projects](#similar-projects)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Motivation
 
@@ -59,6 +77,24 @@ See [SYNTAX](./SYNTAX.md) for how to represent these in "Confluence markdown".
 
 - For running the tests:
   - `npm i -g html-minifier`
+
+## Installation
+
+### Building from source
+
+```sh
+$ stack install
+```
+
+Tests can be run with the make command:
+
+```sh
+$ make test
+```
+
+### Static binary
+
+TODO
 
 ## Resources
 
