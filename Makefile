@@ -1,4 +1,4 @@
-.PHONY: build install test
+.PHONY: build install test example
 
 build:
 	stack build
@@ -8,3 +8,6 @@ install:
 
 test:
 	. ./tests/run_tests.sh
+
+example:
+	. ./examples/run_example.sh

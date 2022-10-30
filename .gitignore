@@ -3,6 +3,8 @@
 *~
 
 # Example output
+examples/*.html
+examples/*.json
 scratch/*
 
 # Node (for testing examples with @mermaid-js/mermaid-cli)
