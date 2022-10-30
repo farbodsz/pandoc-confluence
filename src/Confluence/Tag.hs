@@ -25,7 +25,7 @@ acParameter name value =
     Element "ac:parameter" [("ac:name", Just name)] [value]
 
 acPlainTextBody :: T.Text -> Element T.Text
-acPlainTextBody txt = Element "ac:plain-text-body" [] ["<![CDATA[", txt, "]]"]
+acPlainTextBody txt = Element "ac:plain-text-body" [] ["<![CDATA[", txt, "]]>"]
 
 riAttachment :: T.Text -> Element T.Text
 riAttachment fname = Element "ri:attachment" [("ri:filename", Just fname)] []
