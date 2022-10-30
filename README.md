@@ -26,7 +26,7 @@ develop another process to publish the output file to a Confluence page.
     - [ ] JIRA link
   - [ ] Other formatting options
     - [ ] Status badge
-- [x] Block text
+- [ ] Block text
   - [ ] List formats
     - [ ] Task list
   - [ ] Note formats
@@ -54,6 +54,11 @@ develop another process to publish the output file to a Confluence page.
   - [ ] To an anchor (same page)
   - [ ] With embedded image as body
   - [ ] Error on any markup not permitted in Confluence link bodies
+
+## Dependencies
+
+- For running the tests:
+  - `npm i -g html-minifier`
 
 ## Resources
 
