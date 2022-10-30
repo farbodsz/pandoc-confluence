@@ -64,12 +64,20 @@ See [SYNTAX](./SYNTAX.md) for how to represent these in "Confluence markdown".
 
 ### Documentation
 
-- [Haskell: `pandoc-types` `Text.Pandoc.Definition`](https://hackage.haskell.org/package/pandoc-types-1.22.2.1/docs/Text-Pandoc-Definition.html)
-- [Pandoc: Filters](https://pandoc.org/filters.html)
-- [Atlassian: Confluence Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
-- [Google Groups: multiple filters in Pandoc](https://groups.google.com/g/pandoc-discuss/c/vHjIOej7L0Q?pli=1)
+- Atlassian:
+  - [Atlassian: Confluence Storage Format](https://confluence.atlassian.com/doc/confluence-storage-format-790796544.html)
+  - [Atlassian: Confluence Macros](https://confluence.atlassian.com/doc/macros-139387.html)
+- Haskell:
+  - [Hackage: `pandoc-types` `Text.Pandoc.Definition`](https://hackage.haskell.org/package/pandoc-types-1.22.2.1/docs/Text-Pandoc-Definition.html)
+  - [Pandoc: Filters](https://pandoc.org/filters.html)
+- Forums:
+  - [Google Groups: multiple filters in Pandoc](https://groups.google.com/g/pandoc-discuss/c/vHjIOej7L0Q?pli=1)
 
 ### Similar projects
 
-- [jpbarrette/pandoc-confluence-writer](https://github.com/jpbarrette/pandoc-confluence-writer):
-  Lua filter for Confluence XHTML
+- Atlassian Marketplace:
+  - [Markdown Extensions for Confluence](https://marketplace.atlassian.com/apps/1215703/markdown-extensions-for-confluence?hosting=server&tab=overview)
+  - [Source Editor for Confluence](https://marketplace.atlassian.com/apps/1215664/source-editor-for-confluence?hosting=datacenter&tab=overview)
+- Pandoc Filters:
+  - [jpbarrette/pandoc-confluence-writer](https://github.com/jpbarrette/pandoc-confluence-writer):
+    Lua filter for Confluence XHTML
