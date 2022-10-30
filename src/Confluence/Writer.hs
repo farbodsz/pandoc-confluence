@@ -19,9 +19,9 @@ import           Text.Pandoc.Definition
 --
 --   * Code blocks: rendered with the @ac:structured-macro@ tag
 --
-blockFilter :: Block -> Block
+blockFilter :: Block -> [Block]
 blockFilter (CodeBlock _attrs txt) = toBlock $ AcCodeBlock "bash" txt
-blockFilter b                      = b
+blockFilter b                      = pure b
 
 
 -- | @inlineFilter inline@ transforms a Pandoc 'Inline' into an equivalent

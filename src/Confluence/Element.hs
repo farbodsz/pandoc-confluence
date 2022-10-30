@@ -65,26 +65,24 @@ instance ToInline Html where
     toInline = pure . RawInline "html"
 
 instance ToInline a => ToInline (Element a) where
-    toInline Element {..} = if null elBody
-        then mkTag TagStartEnd
-        else
-            let inlines = concatMap toInline elBody
-            in  mkTag TagStart <> inlines <> mkTag TagEnd
+    toInline Element {..}
+        | null elBody = mkTag TagStartEnd
+        | otherwise   = mkTag TagStart <> inlines <> mkTag TagEnd
       where
-        mkTag :: TagType -> [Inline]
-        mkTag = toInline . renderTag elTag elAttrs
+        inlines = concatMap toInline elBody
+        mkTag   = toInline . renderTag elTag elAttrs
 
 
 class ToBlock a where
-    toBlock :: a -> Block
+    toBlock :: a -> [Block]
 
 instance ToBlock Block where
-    toBlock = id
+    toBlock = pure
 
 instance ToBlock Html where
-    toBlock = RawBlock "html"
+    toBlock = pure . RawBlock "html"
 
 instance ToInline a => ToBlock [a] where
-    toBlock es = Plain $ concatMap toInline es
+    toBlock = pure . Plain . concatMap toInline
 
 --------------------------------------------------------------------------------

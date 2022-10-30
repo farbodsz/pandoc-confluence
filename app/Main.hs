@@ -15,7 +15,7 @@ main :: IO ()
 main = toJSONFilter pandocFilter
 
 pandocFilter :: Pandoc -> Pandoc
-pandocFilter = bottomUp (concatMap (pure . blockFilter))
-    . bottomUp (concatMap inlineFilter)
+pandocFilter =
+    bottomUp (concatMap blockFilter) . bottomUp (concatMap inlineFilter)
 
 --------------------------------------------------------------------------------
