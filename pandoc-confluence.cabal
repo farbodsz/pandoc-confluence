@@ -26,8 +26,9 @@ source-repository head
 
 library
   exposed-modules:
-      Confluence.Element
+      Confluence.Block
       Confluence.Html
+      Confluence.Inline
       Confluence.Tag
       Confluence.Writer
   other-modules:

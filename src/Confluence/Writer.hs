@@ -5,7 +5,8 @@ module Confluence.Writer
     , inlineFilter
     ) where
 
-import           Confluence.Element
+import           Confluence.Block
+import           Confluence.Inline
 import           Control.Monad                  ( mfilter )
 import           Data.Bifunctor                 ( Bifunctor(first) )
 import qualified Data.Text                     as T

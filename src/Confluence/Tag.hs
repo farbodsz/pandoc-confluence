@@ -3,8 +3,9 @@
 -- | Confluence-specific XHTML tags.
 --
 module Confluence.Tag
-    ( acStructuredMacro
-    , acParameter
+    ( acImage
+    , acStructuredMacro
+    , acParam
     , acPlainTextBody
     , acRichTextBody
     , riAttachment
@@ -15,6 +16,9 @@ import           Confluence.Html                ( Element(..) )
 import qualified Data.Text                     as T
 
 --------------------------------------------------------------------------------
+
+acImage :: [a] -> Element a
+acImage = Element "ac:image" []
 
 acStructuredMacro :: T.Text -> [a] -> Element a
 acStructuredMacro name = Element
