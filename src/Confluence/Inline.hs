@@ -4,6 +4,8 @@
 module Confluence.Inline
     ( ToInline(..)
     , ConfluenceInline(..)
+    , MacroName
+    , MacroOption
     ) where
 
 import           Confluence.Html
@@ -33,6 +35,12 @@ instance ToInline a => ToInline (Element a) where
 
 --------------------------------------------------------------------------------
 
+type MacroName = T.Text
+
+-- | A macro option is a key-value mapping, written in source code as: 
+-- @key=value@ where both key and value are (unquoted) strings.
+type MacroOption = (T.Text, T.Text)
+
 -- | Inline Confluence elements, including Confluence resource identifiers.
 --
 -- Resource identifiers are used to describe "links" or "references" to
@@ -45,10 +53,15 @@ data ConfluenceInline
     | RiUrl T.Text
     -- ^ URL
     | AcImage [Inline]
+    -- ^ Image (alt text inlines)
+    | AcMacro MacroName [MacroOption]
+    -- ^ Some other inline macro.
 
 instance ToInline ConfluenceInline where
     toInline (RiAttachment fname) = toInline $ riAttachment fname
     toInline (RiUrl        url  ) = toInline $ riUrl url
     toInline (AcImage      is   ) = toInline $ acImage is
+    toInline (AcMacro name opts) =
+        toInline $ acStructuredMacro name (acParams opts)
 
 --------------------------------------------------------------------------------

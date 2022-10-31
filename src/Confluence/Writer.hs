@@ -9,7 +9,7 @@ import           Confluence.Block
 import           Confluence.Inline
 import           Confluence.Params
 import           Control.Monad                  ( mfilter )
-import           Data.Bifunctor                 ( Bifunctor(first) )
+import           Data.Bifunctor                 ( Bifunctor(first, second) )
 import qualified Data.Text                     as T
 import           Text.Pandoc.Definition
 
@@ -20,6 +20,9 @@ import           Text.Pandoc.Definition
 --
 -- A code block is only transformed if it is marked with a valid programming
 -- language, otherwise the block is rendered as normal.
+--
+-- If a macro is the only inline in a block, then it is rendered as a plain
+-- block with that single inline.
 blockFilter :: Block -> [Block]
 blockFilter b@(CodeBlock attrs body) = case getCodeBlockLang attrs of
     Nothing   -> pure b
@@ -46,7 +49,13 @@ blockFilter b = pure b
 --   * Strikethroughs: rendered as @span@s
 --   * Images: rendered with @ac:image@
 --
+-- We also add the option of including Confluence Wiki-like inline macros, so
+-- any string surrounded by curly braces is assumed to be a macro.
+--
 inlineFilter :: Inline -> [Inline]
+inlineFilter (Str txt)
+    | isMacroFormat txt = toInline . uncurry AcMacro $ parseMacro txt
+    | otherwise         = pure $ Str txt
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
     where attrs = ("", [], [("style", "text-decoration: line-through;")])
 inlineFilter (Image _ _ (url, _)) =
@@ -71,5 +80,25 @@ splitBlockOnFirstStr b = (Nothing, b)
 getCodeBlockLang :: Attr -> Maybe T.Text
 getCodeBlockLang (_, [cls], _) = Just cls
 getCodeBlockLang (_, _    , _) = Nothing
+
+-- | @isMacroFormat text@ returns True if the given text is surrounded by curly
+-- braces.
+isMacroFormat :: T.Text -> Bool
+isMacroFormat txt = startsWith "{" txt && endsWith "}" txt
+  where
+    startsWith ch = (== ch) . T.take 1
+    endsWith ch = (== ch) . T.takeEnd 1
+
+-- | @parseMacro text@ attempts to parse some inline string as a Confluence
+-- macro, throwing a runtime exception if unable to parse!
+--
+-- WARNING: this is a partial function!
+--
+parseMacro :: T.Text -> (MacroName, [MacroOption])
+parseMacro = second parseMacroOpts . splitTup ':' . macroContents
+  where
+    macroContents  = T.dropAround (\c -> c == '{' || c == '}')
+    parseMacroOpts = map (splitTup '=') . T.split (== '|')
+    splitTup ch = second (T.drop 1) . T.break (== ch)
 
 --------------------------------------------------------------------------------
