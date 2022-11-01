@@ -97,8 +97,9 @@ isMacroFormat txt = startsWith "{" txt && endsWith "}" txt
 parseMacro :: T.Text -> (MacroName, [MacroOption])
 parseMacro = second parseMacroOpts . splitTup ':' . macroContents
   where
-    macroContents  = T.dropAround (\c -> c == '{' || c == '}')
-    parseMacroOpts = map (splitTup '=') . T.split (== '|')
+    macroContents = T.dropAround (\c -> c == '{' || c == '}')
+    parseMacroOpts =
+        map (splitTup '=') . filter (not . T.null) . T.split (== '|')
     splitTup ch = second (T.drop 1) . T.break (== ch)
 
 --------------------------------------------------------------------------------
