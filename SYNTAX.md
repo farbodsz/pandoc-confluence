@@ -27,3 +27,19 @@ Examples:
 ```markdown
 > WARNING: This is a warning.
 ```
+
+## Confluence macros
+
+Any inline Confluence macro can be written using curly brace syntax:
+
+```markdown
+{macroName:key1=value1|key2=value2|keyN=valueN}
+```
+
+Just like in the Confluence Wiki file format.
+
+For example, to render a table of contents macro, with some options:
+
+```markdown
+{toc:printable=true|outline=true}
+```

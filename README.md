@@ -10,7 +10,9 @@ Custom [Pandoc](https://pandoc.org/) writer for Confluence's
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Motivation](#motivation)
-- [Supported features](#supported-features)
+- [Features](#features)
+  - [Supported](#supported)
+  - [To do](#to-do)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
   - [Building from source](#building-from-source)
@@ -34,36 +36,31 @@ Writing XHTML by hand is obviously impractical, but writing Markdown is fun.
 With a way to convert from Markdown to Confluence's XHTML, we would be able to
 develop another process to publish the output file to a Confluence page.
 
-## Supported features
+## Features
 
-- [ ] Inline text
-  - [x] Basic inline formatting
-    - [x] Strike-through
-  - [ ] Special confluence links
-    - [ ] User mentions
-    - [ ] JIRA link
-  - [ ] Other formatting options
-    - [ ] Status badge
-- [ ] Block text
-  - [ ] List formats
-    - [ ] Task list
-  - [ ] Note formats
-    - [x] Note, info, tip, warning
-    - [ ] Additional Confluence options (e.g. "title" parameter)
-  - [ ] Expandable text block
-- [ ] Document organisation
-  - [ ] Table of contents
-    - [ ] Basic
-    - [ ] With all the Confluence options
-- [ ] Images
-  - [x] Attached image
-  - [x] External image
-  - [ ] Image attributes
-- [ ] Code blocks
-  - [x] Simple
-  - [ ] With all the Confluence options
-- [ ] Character escaping
-- [ ] Links
+### Supported
+
+- Inline text formatting
+- Confluence macro syntax, to render anything supported in Confluence wiki such
+  as:
+  - Status badge
+  - Table of contents
+  - [Cheese](https://confluence.atlassian.com/doc/cheese-macro-154632825.html)
+    macro
+- Note/info/tip/warning block text
+- Images
+- Code blocks
+
+### To do
+
+- [ ] Special inline text
+  - [ ] JIRAs
+  - [ ] User mentions
+- [ ] Options for note/info/tip/warning block text
+- [ ] Expandable text block
+- [ ] Image attributes
+- [ ] Options for code blocks
+- [ ] Auto-link generation
   - [ ] To another Confluence page
   - [ ] To an attachment
   - [ ] To an external site
