@@ -34,7 +34,6 @@ failure() {
 }
 
 DIVIDER_LINE="--------------------------------------------------"
-DIVIDER_LINE_THICK="=================================================="
 
 #------------------------------------------------------------------------------
 # Build
@@ -43,7 +42,7 @@ DIVIDER_LINE_THICK="=================================================="
 run_build() {
   set -e
   echo ""
-  echo $DIVIDER_LINE_THICK
+  echo $DIVIDER_LINE
   echo "Building..."
   echo ""
   stack build
@@ -74,7 +73,7 @@ make_expected_output() {
 
 run_tests() {
   set +e
-  echo $DIVIDER_LINE_THICK
+  echo $DIVIDER_LINE
   echo "Running tests..."
   echo ""
 
@@ -90,8 +89,7 @@ run_tests() {
     make_actual_output "$input_file" >$OUTPUT_FILE_ACTUAL
     make_expected_output "$input_html" >$OUTPUT_FILE_EXPECTED
 
-    info $DIVIDER_LINE
-    info "TESTING: $test_name"
+    info "Test $test_name"
 
     if cmp --silent "$OUTPUT_FILE_ACTUAL" "$OUTPUT_FILE_EXPECTED"; then
       success "PASSED"
@@ -105,17 +103,17 @@ run_tests() {
       cat "$OUTPUT_FILE_ACTUAL"
       echo ""
       failed=$((failed + 1))
+      echo ""
     fi
-    echo ""
   done
 
-  echo $DIVIDER_LINE_THICK
+  echo $DIVIDER_LINE
   if [ $failed -gt 0 ]; then
     failure "RESULT: Passed ${passed} / $((passed + failed)) tests!"
   else
     success "RESULT: All ${passed} tests passed!"
   fi
-  echo $DIVIDER_LINE_THICK
+  echo $DIVIDER_LINE
   exit $failed
 }
 
