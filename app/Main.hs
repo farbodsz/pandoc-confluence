@@ -1,13 +1,13 @@
 --------------------------------------------------------------------------------
 
-module Main
-    ( main
-    ) where
+module Main (
+    main,
+) where
 
-import           Confluence.Writer
-import           Text.Pandoc.Definition         ( Pandoc )
-import           Text.Pandoc.Generic            ( bottomUp )
-import           Text.Pandoc.JSON               ( ToJSONFilter(toJSONFilter) )
+import Confluence.Writer
+import Text.Pandoc.Definition (Pandoc)
+import Text.Pandoc.Generic (bottomUp)
+import Text.Pandoc.JSON (ToJSONFilter (toJSONFilter))
 
 --------------------------------------------------------------------------------
 

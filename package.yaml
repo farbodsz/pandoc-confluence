@@ -18,6 +18,7 @@ dependencies:
   - text
 
 default-extensions:
+  - ImportQualifiedPost
   - OverloadedStrings
   - RecordWildCards
   - TypeSynonymInstances

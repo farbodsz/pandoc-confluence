@@ -1,17 +1,17 @@
 --------------------------------------------------------------------------------
 
-module Confluence.Writer
-    ( blockFilter
-    , inlineFilter
-    ) where
+module Confluence.Writer (
+    blockFilter,
+    inlineFilter,
+) where
 
-import           Confluence.Block
-import           Confluence.Inline
-import           Confluence.Params
-import           Control.Monad                  ( mfilter )
-import           Data.Bifunctor                 ( Bifunctor(first, second) )
-import qualified Data.Text                     as T
-import           Text.Pandoc.Definition
+import Confluence.Block
+import Confluence.Inline
+import Confluence.Params
+import Control.Monad (mfilter)
+import Data.Bifunctor (Bifunctor (first, second))
+import Data.Text qualified as T
+import Text.Pandoc.Definition
 
 --------------------------------------------------------------------------------
 
@@ -25,18 +25,22 @@ import           Text.Pandoc.Definition
 -- block with that single inline.
 blockFilter :: Block -> [Block]
 blockFilter b@(CodeBlock attrs body) = case getCodeBlockLang attrs of
-    Nothing   -> pure b
-    Just lang -> toBlock $ AcCodeBlock
-        (CodeBlockParams lang Nothing Nothing Nothing Nothing Nothing)
-        body
+    Nothing -> pure b
+    Just lang ->
+        toBlock $
+            AcCodeBlock
+                (CodeBlockParams lang Nothing Nothing Nothing Nothing Nothing)
+                body
 blockFilter (BlockQuote (b : bs)) =
-    let (m_box_ty, rest_b) = first (mfilter isValidBoxTy . fmap extractTag)
-                                   (splitBlockOnFirstStr b)
-    in  case m_box_ty of
-            Nothing     -> b : bs
+    let (m_box_ty, rest_b) =
+            first
+                (mfilter isValidBoxTy . fmap extractTag)
+                (splitBlockOnFirstStr b)
+     in case m_box_ty of
+            Nothing -> b : bs
             Just box_ty -> toBlock $ AcBoxedText box_ty (rest_b : bs)
   where
-    extractTag   = T.toLower . T.strip . head . T.split (== ':')
+    extractTag = T.toLower . T.strip . head . T.split (== ':')
     isValidBoxTy = flip elem ["note", "info", "tip", "warning"]
 blockFilter b = pure b
 
@@ -51,17 +55,18 @@ blockFilter b = pure b
 --
 -- We also add the option of including Confluence Wiki-like inline macros, so
 -- any string surrounded by curly braces is assumed to be a macro.
---
 inlineFilter :: Inline -> [Inline]
 inlineFilter (Str txt)
     | isMacroFormat txt = toInline . uncurry AcMacro $ parseMacro txt
-    | otherwise         = pure $ Str txt
+    | otherwise = pure $ Str txt
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
-    where attrs = ("", [], [("style", "text-decoration: line-through;")])
+  where
+    attrs = ("", [], [("style", "text-decoration: line-through;")])
 inlineFilter (Image _ _ (url, _)) =
-    toInline . AcImage . toInline $ if "http" `T.isPrefixOf` url
-        then RiUrl url
-        else RiAttachment url
+    toInline . AcImage . toInline $
+        if "http" `T.isPrefixOf` url
+            then RiUrl url
+            else RiAttachment url
 inlineFilter i = pure i
 
 --------------------------------------------------------------------------------
@@ -70,7 +75,7 @@ inlineFilter i = pure i
 -- by the rest of the block (i.e. block, excluding this first string).
 splitBlockOnFirstStr :: Block -> (Maybe T.Text, Block)
 splitBlockOnFirstStr (Plain ((Str t) : is)) = (Just t, Plain is)
-splitBlockOnFirstStr (Para  ((Str t) : is)) = (Just t, Para is)
+splitBlockOnFirstStr (Para ((Str t) : is)) = (Just t, Para is)
 splitBlockOnFirstStr (LineBlock (((Str t) : is) : iss)) =
     (Just t, LineBlock (is : iss))
 splitBlockOnFirstStr b = (Nothing, b)
@@ -79,7 +84,7 @@ splitBlockOnFirstStr b = (Nothing, b)
 -- class in the code block's attributes.
 getCodeBlockLang :: Attr -> Maybe T.Text
 getCodeBlockLang (_, [cls], _) = Just cls
-getCodeBlockLang (_, _    , _) = Nothing
+getCodeBlockLang (_, _, _) = Nothing
 
 -- | @isMacroFormat text@ returns True if the given text is surrounded by curly
 -- braces.
@@ -93,7 +98,6 @@ isMacroFormat txt = startsWith "{" txt && endsWith "}" txt
 -- macro, throwing a runtime exception if unable to parse!
 --
 -- WARNING: this is a partial function!
---
 parseMacro :: T.Text -> (MacroName, [MacroOption])
 parseMacro = second parseMacroOpts . splitTup ':' . macroContents
   where

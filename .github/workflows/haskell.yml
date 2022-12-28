@@ -1,35 +1,36 @@
 name: Haskell CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    env:
+      FOURMOLU_VERSION: 0.9.0.0
+      FOURMOLU: fourmolu-0.9.0.0-linux-x86_64
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          wget --quiet https://github.com/fourmolu/fourmolu/releases/download/v${FOURMOLU_VERSION}/${FOURMOLU}
+          chmod +x ${FOURMOLU}
+          ./${FOURMOLU} --mode check $(git ls-files '*.hs')
+
   build:
     strategy:
       matrix:
         resolver:
           - stack
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
-
       - name: Install Haskell Stack
         run: |
           which stack || curl -sSL https://get.haskellstack.org/ | sh
           export PATH=$HOME/.local/bin:$PATH
-
       - name: Install GHC
         run: |
           export PATH=$HOME/.local/bin:$PATH
           stack --stack-yaml=${{ matrix.resolver }}.yaml --install-ghc setup
-
-      - name: Install Brittany
-        run: |
-          export PATH=$HOME/.local/bin:$PATH
-          stack --stack-yaml=${{ matrix.resolver }}.yaml install brittany
-          brittany **/*.hs -c
-
       - name: Build
         run: |
           export PATH=$HOME/.local/bin:$PATH

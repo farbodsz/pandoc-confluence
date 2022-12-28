@@ -37,6 +37,7 @@ library
   hs-source-dirs:
       src
   default-extensions:
+      ImportQualifiedPost
       OverloadedStrings
       RecordWildCards
       TypeSynonymInstances
@@ -54,6 +55,7 @@ executable pandoc-confluence
   hs-source-dirs:
       app
   default-extensions:
+      ImportQualifiedPost
       OverloadedStrings
       RecordWildCards
       TypeSynonymInstances

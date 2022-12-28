@@ -1,20 +1,19 @@
 --------------------------------------------------------------------------------
 
 -- | Confluence-specific XHTML tags.
---
-module Confluence.Tag
-    ( acImage
-    , acStructuredMacro
-    , acParam
-    , acParams
-    , acPlainTextBody
-    , acRichTextBody
-    , riAttachment
-    , riUrl
-    ) where
+module Confluence.Tag (
+    acImage,
+    acStructuredMacro,
+    acParam,
+    acParams,
+    acPlainTextBody,
+    acRichTextBody,
+    riAttachment,
+    riUrl,
+) where
 
-import           Confluence.Html                ( Element(..) )
-import qualified Data.Text                     as T
+import Confluence.Html (Element (..))
+import Data.Text qualified as T
 
 --------------------------------------------------------------------------------
 
@@ -22,9 +21,10 @@ acImage :: [a] -> Element a
 acImage = Element "ac:image" []
 
 acStructuredMacro :: T.Text -> [a] -> Element a
-acStructuredMacro name = Element
-    "ac:structured-macro"
-    [("ac:name", Just name), ("ac:schema-version", Just "1")]
+acStructuredMacro name =
+    Element
+        "ac:structured-macro"
+        [("ac:name", Just name), ("ac:schema-version", Just "1")]
 
 acParam :: T.Text -> T.Text -> Element T.Text
 acParam name value = Element "ac:parameter" [("ac:name", Just name)] [value]
