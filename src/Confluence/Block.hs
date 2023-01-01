@@ -16,6 +16,7 @@ import Text.Pandoc.Definition (Block (Plain))
 --------------------------------------------------------------------------------
 -- Instance definitions
 
+-- | Types that can be converted to Pandoc 'Block' representation.
 class ToBlock a where
     toBlock :: a -> [Block]
 

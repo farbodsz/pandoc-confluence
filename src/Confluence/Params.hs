@@ -1,9 +1,12 @@
 --------------------------------------------------------------------------------
 
 -- | Parameters to Confluence AC objects.
-module Confluence.Params where
+module Confluence.Params (
+    ConfluenceParams (..),
+    CodeBlockParams (..),
+) where
 
-import Confluence.Html (showHtml)
+import Confluence.Html (showLower)
 import Data.Maybe (mapMaybe)
 import Data.Text qualified as T
 
@@ -30,10 +33,10 @@ instance ConfluenceParams CodeBlockParams where
             sequenceA
             [ ("language", Just acCodeLang)
             , ("title", acCodeTitle)
-            , ("collapse", showHtml <$> acCodeCollapsible)
-            , ("linenumbers", showHtml <$> acCodeShowLineNums)
-            , ("firstline", showHtml <$> acCodeFirstLine)
-            , ("theme", showHtml <$> acCodeTheme)
+            , ("collapse", showLower <$> acCodeCollapsible)
+            , ("linenumbers", showLower <$> acCodeShowLineNums)
+            , ("firstline", showLower <$> acCodeFirstLine)
+            , ("theme", showLower <$> acCodeTheme)
             ]
 
 --------------------------------------------------------------------------------

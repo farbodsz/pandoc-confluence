@@ -1,11 +1,12 @@
 --------------------------------------------------------------------------------
 
+-- | HTML types and function to produce HTML.
 module Confluence.Html (
     Element (..),
     Html,
     TagType (..),
     renderTag,
-    showHtml,
+    showLower,
 ) where
 
 import Data.Text qualified as T
@@ -21,6 +22,7 @@ data TagType = TagStart | TagEnd | TagStartEnd
 
 type Attr = (T.Text, Maybe T.Text)
 
+-- | A HTML element, consisting of the tag name, HTML attributes, and the body.
 data Element a = Element
     { elTag :: Tag
     , elAttrs :: [Attr]
@@ -48,7 +50,7 @@ renderTag tag_name attrs tag_ty = case tag_ty of
                 )
                 attrs
 
-showHtml :: Show a => a -> Html
-showHtml = T.toLower . T.pack . show
+showLower :: Show a => a -> Html
+showLower = T.toLower . T.pack . show
 
 --------------------------------------------------------------------------------

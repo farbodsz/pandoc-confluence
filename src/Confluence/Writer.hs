@@ -89,10 +89,7 @@ getCodeBlockLang (_, _, _) = Nothing
 -- | @isMacroFormat text@ returns True if the given text is surrounded by curly
 -- braces.
 isMacroFormat :: T.Text -> Bool
-isMacroFormat txt = startsWith "{" txt && endsWith "}" txt
-  where
-    startsWith ch = (== ch) . T.take 1
-    endsWith ch = (== ch) . T.takeEnd 1
+isMacroFormat txt = "{" `T.isPrefixOf` txt && "}" `T.isSuffixOf` txt
 
 -- | @parseMacro text@ attempts to parse some inline string as a Confluence
 -- macro, throwing a runtime exception if unable to parse!

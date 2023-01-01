@@ -16,6 +16,7 @@ import Text.Pandoc.Definition (Inline (RawInline))
 --------------------------------------------------------------------------------
 -- Instance definitions
 
+-- | Types that can be converted to Pandoc 'Inline' representation.
 class ToInline a where
     toInline :: a -> [Inline]
 
