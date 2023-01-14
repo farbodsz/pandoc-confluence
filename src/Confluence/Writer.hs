@@ -8,9 +8,12 @@ module Confluence.Writer (
 import Confluence.Block
 import Confluence.Inline
 import Confluence.Params
-import Control.Monad (mfilter)
-import Data.Bifunctor (Bifunctor (first, second))
+import Control.Monad (liftM2, mfilter)
+import Data.Bifunctor (Bifunctor (first))
 import Data.Text qualified as T
+import Data.Void (Void)
+import Text.Megaparsec (Parsec, option, parseMaybe, sepBy1, some, (<|>))
+import Text.Megaparsec.Char (char, letterChar, spaceChar)
 import Text.Pandoc.Definition
 
 --------------------------------------------------------------------------------
@@ -56,9 +59,9 @@ blockFilter b = pure b
 -- We also add the option of including Confluence Wiki-like inline macros, so
 -- any string surrounded by curly braces is assumed to be a macro.
 inlineFilter :: Inline -> [Inline]
-inlineFilter (Str txt)
-    | isMacroFormat txt = toInline . uncurry AcMacro $ parseMacro txt
-    | otherwise = pure $ Str txt
+inlineFilter (Str txt) = case parseMacro txt of
+    Nothing -> pure $ Str txt
+    Just (name, opts) -> toInline $ AcMacro name opts
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
   where
     attrs = ("", [], [("style", "text-decoration: line-through;")])
@@ -86,21 +89,48 @@ getCodeBlockLang :: Attr -> Maybe T.Text
 getCodeBlockLang (_, [cls], _) = Just cls
 getCodeBlockLang (_, _, _) = Nothing
 
--- | @isMacroFormat text@ returns True if the given text is surrounded by curly
--- braces.
-isMacroFormat :: T.Text -> Bool
-isMacroFormat txt = "{" `T.isPrefixOf` txt && "}" `T.isSuffixOf` txt
+--------------------------------------------------------------------------------
 
--- | @parseMacro text@ attempts to parse some inline string as a Confluence
--- macro, throwing a runtime exception if unable to parse!
+type ConfluenceMdParser = Parsec Void T.Text
+
+-- | @parseMacro text@ attempts to parse an inline string representing a
+-- Confluence macro into a Confluence macro.
 --
--- WARNING: this is a partial function!
-parseMacro :: T.Text -> (MacroName, [MacroOption])
-parseMacro = second parseMacroOpts . splitTup ':' . macroContents
+-- Inline Confluence macros use the following syntax:
+-- @
+-- {macroName:key1=value1|key2=value2|keyN=valueN}
+-- @
+--
+-- Examples:
+--
+-- >>> parseMacro "{toc}"
+-- Just ("toc",[])
+--
+-- >>> parseMacro "{toc:printable=true|outline=true}"
+-- Just ("toc",[("printable","true"),("outline","true")])
+--
+-- >>> parseMacro "{status:colour=Blue|title=In progress}"
+-- Just ("status",[("colour","Blue"),("title","In progress")])
+--
+-- >>> parseMacro "not a macro"
+-- Nothing
+parseMacro :: T.Text -> Maybe (MacroName, [MacroOption])
+parseMacro = parseMaybe parser
   where
-    macroContents = T.dropAround (\c -> c == '{' || c == '}')
-    parseMacroOpts =
-        map (splitTup '=') . filter (not . T.null) . T.split (== '|')
-    splitTup ch = second (T.drop 1) . T.break (== ch)
+    parser = do
+        _ <- char '{'
+        name <- keyP
+        opts <- option mempty $ char ':' *> (macroOptP `sepBy1` char '|')
+        _ <- char '}'
+        pure (name, opts)
+
+    keyP :: ConfluenceMdParser T.Text
+    keyP = T.pack <$> some letterChar
+
+    valueP :: ConfluenceMdParser T.Text
+    valueP = T.pack <$> some (letterChar <|> spaceChar)
+
+    macroOptP :: ConfluenceMdParser MacroOption
+    macroOptP = liftM2 (,) keyP (char '=' *> valueP)
 
 --------------------------------------------------------------------------------
