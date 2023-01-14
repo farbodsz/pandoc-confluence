@@ -11,6 +11,7 @@ author: "Farbod Salamat-Zadeh"
 copyright: "2022 Farbod Salamat-Zadeh"
 extra-source-files:
   - README.md
+  - doctest-config.json
 
 dependencies:
   - base >= 4.7 && < 5
@@ -48,3 +49,16 @@ executables:
       - -with-rtsopts=-N
     dependencies:
       - pandoc-confluence
+
+tests:
+  pandoc-confluence-test:
+    main: doctest-driver.hs
+    source-dirs: tests
+    ghc-options:
+      - -threaded
+      - -rtsopts
+      - -with-rtsopts=-N
+    dependencies:
+      - pandoc-confluence
+      - doctest
+      - doctest-discover

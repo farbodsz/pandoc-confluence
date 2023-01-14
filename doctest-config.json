@@ -1,0 +1,8 @@
+{
+  "doctestOptions": [
+    "-XImportQualifiedPost",
+    "-XOverloadedStrings",
+    "-XRecordWildCards",
+    "-XTypeSynonymInstances"
+  ]
+}

@@ -19,6 +19,7 @@ license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
+    doctest-config.json
 
 source-repository head
   type: git
@@ -63,6 +64,29 @@ executable pandoc-confluence
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , megaparsec
+    , pandoc-confluence
+    , pandoc-types
+    , text
+  default-language: Haskell2010
+
+test-suite pandoc-confluence-test
+  type: exitcode-stdio-1.0
+  main-is: doctest-driver.hs
+  other-modules:
+      Paths_pandoc_confluence
+  hs-source-dirs:
+      tests
+  default-extensions:
+      ImportQualifiedPost
+      OverloadedStrings
+      RecordWildCards
+      TypeSynonymInstances
+  ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , doctest
+    , doctest-discover
     , megaparsec
     , pandoc-confluence
     , pandoc-types

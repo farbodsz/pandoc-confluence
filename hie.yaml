@@ -8,3 +8,6 @@ cradle:
 
     - path: "./app/Paths_pandoc_confluence.hs"
       component: "pandoc-confluence:exe:pandoc-confluence"
+
+    - path: "./tests"
+      component: "pandoc-confluence:test:pandoc-confluence-test"

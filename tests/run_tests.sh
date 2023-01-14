@@ -2,6 +2,8 @@
 
 EXECUTABLE="pandoc-confluence"
 
+TEST_INPUT_FILES="tests/data/*.md"
+
 OUTPUT_FILE_ACTUAL="/tmp/pandoc-confluence-test-output-actual.html"
 OUTPUT_FILE_EXPECTED="/tmp/pandoc-confluence-test-output-exp.html"
 
@@ -80,7 +82,7 @@ run_tests() {
   passed=0
   failed=0
 
-  for input_file in ./tests/*.md; do
+  for input_file in $TEST_INPUT_FILES; do
     _basename="${input_file##*/}"
     test_name="${input_file%.*}"
 
