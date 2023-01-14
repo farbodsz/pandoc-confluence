@@ -11,12 +11,10 @@ Custom [Pandoc](https://pandoc.org/) writer for Confluence's
 
 - [Motivation](#motivation)
 - [Features](#features)
-  - [Supported](#supported)
-  - [To do](#to-do)
-- [Dependencies](#dependencies)
 - [Installation](#installation)
-  - [Building from source](#building-from-source)
-  - [Static binary](#static-binary)
+- [Contributing](#contributing)
+  - [Setting up development environment](#setting-up-development-environment)
+  - [Testing](#testing)
 - [Resources](#resources)
   - [Documentation](#documentation)
   - [Similar projects](#similar-projects)
@@ -38,29 +36,21 @@ develop another process to publish the output file to a Confluence page.
 
 ## Features
 
-### Supported
-
-- Inline text formatting
-- Confluence macro syntax, to render anything supported in Confluence wiki such
-  as:
-  - Status badge
-  - Table of contents
-  - [Cheese](https://confluence.atlassian.com/doc/cheese-macro-154632825.html)
-    macro
-- Note/info/tip/warning block text
-- Images
-- Code blocks
-
-### To do
-
-- [ ] Special inline text
+- Inline text
+  - [x] Standard formatting (bold/italic)
   - [ ] JIRAs
   - [ ] User mentions
-- [ ] Options for note/info/tip/warning block text
-- [ ] Expandable text block
-- [ ] Image attributes
-- [ ] Options for code blocks
-- [ ] Auto-link generation
+- Block text
+  - [x] Note/info/tip/warning boxes
+  - [ ] Expandable text block
+  - [x] Confluence macros (status badge, table of contents,
+        [cheese](https://confluence.atlassian.com/doc/cheese-macro-154632825.html))
+  - [x] Standard code blocks
+  - [ ] Code blocks with custom options
+- Images
+  - [ ] Images
+  - [ ] Image attributes
+- Links
   - [ ] To another Confluence page
   - [ ] To an attachment
   - [ ] To an external site
@@ -70,28 +60,38 @@ develop another process to publish the output file to a Confluence page.
 
 See [SYNTAX](./SYNTAX.md) for how to represent these in "Confluence markdown".
 
-## Dependencies
-
-- For running the tests:
-  - `npm i -g html-minifier`
-
 ## Installation
 
-### Building from source
+Install from source:
 
 ```sh
 $ stack install
 ```
 
-Tests can be run with the make command:
+Installation from static binary coming soon! (TODO)
+
+## Contributing
+
+### Setting up development environment
+
+If you don't already have Haskell installed, the best way to install it is via
+[GHCup](https://www.haskell.org/ghcup/).
+
+### Testing
+
+To run the end-to-end tests, you need to install the following dependencies:
 
 ```sh
-$ make test
+$ npm i -g html-minifier
 ```
 
-### Static binary
+Run tests via `make`:
 
-TODO
+```sh
+$ make test         # run end-to-end tests
+$ make doctest      # test examples in doc comments
+$ make test-all     # run all tests
+```
 
 ## Resources
 
