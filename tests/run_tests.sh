@@ -48,7 +48,7 @@ run_build() {
   echo "Building..."
   echo ""
   stack build
-  FILTER_PATH=$(stack exec -- whereis $EXECUTABLE | awk -F ': ' '{ print $2 }')
+  FILTER_PATH=$(stack exec -- whereis $EXECUTABLE | awk -F ' ' '{ print $2 }')
 }
 
 #------------------------------------------------------------------------------
