@@ -9,6 +9,7 @@ module Confluence.Tag (
     acPlainTextBody,
     acRichTextBody,
     riAttachment,
+    riShortcut,
     riUrl,
 ) where
 
@@ -50,6 +51,17 @@ acRichTextBody = Element "ac:rich-text-body" []
 -- element with that filename.
 riAttachment :: T.Text -> Element T.Text
 riAttachment fname = Element "ri:attachment" [("ri:filename", Just fname)] []
+
+-- | @riShortcut key param body@ transforms a given key-parameter pair into an
+-- Atlassian shortcut.
+--
+-- For example: key="jira" and param="ABC-123" creates a jira link.
+riShortcut :: T.Text -> T.Text -> T.Text -> Element T.Text
+riShortcut key param body =
+    Element
+        "ri:shortcut"
+        [("ri:key", Just key), ("ri:parameter", Just param)]
+        [body]
 
 -- | @riUrl url@ transforms a URL to a Confluence URL element referencing that
 -- URL.

@@ -52,6 +52,8 @@ data ConfluenceInline
       RiAttachment T.Text
     | -- | URL
       RiUrl T.Text
+    | -- | Shortcut: key and parameter (e.g. "jira" and "ABC-123")
+      RiShortcut T.Text T.Text
     | -- | Image (alt text inlines)
       AcImage [Inline]
     | -- | Some other inline macro.
@@ -59,6 +61,7 @@ data ConfluenceInline
 
 instance ToInline ConfluenceInline where
     toInline (RiAttachment fname) = toInline $ riAttachment fname
+    toInline (RiShortcut key param) = toInline $ riShortcut key param param
     toInline (RiUrl url) = toInline $ riUrl url
     toInline (AcImage is) = toInline $ acImage is
     toInline (AcMacro name opts) =

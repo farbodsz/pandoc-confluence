@@ -13,7 +13,7 @@ import Data.Bifunctor (Bifunctor (first))
 import Data.Text qualified as T
 import Data.Void (Void)
 import Text.Megaparsec (Parsec, option, parseMaybe, sepBy1, some, (<|>))
-import Text.Megaparsec.Char (char, letterChar, spaceChar)
+import Text.Megaparsec.Char (char, digitChar, letterChar, spaceChar, upperChar)
 import Text.Pandoc.Definition
 
 --------------------------------------------------------------------------------
@@ -59,9 +59,11 @@ blockFilter b = pure b
 -- We also add the option of including Confluence Wiki-like inline macros, so
 -- any string surrounded by curly braces is assumed to be a macro.
 inlineFilter :: Inline -> [Inline]
-inlineFilter (Str txt) = case parseMacro txt of
-    Nothing -> pure $ Str txt
-    Just (name, opts) -> toInline $ AcMacro name opts
+inlineFilter (Str txt) = case parseJira txt of
+    Just code -> toInline $ RiShortcut "jira" code
+    Nothing -> case parseMacro txt of
+        Nothing -> pure $ Str txt
+        Just (name, opts) -> toInline $ AcMacro name opts
 inlineFilter (Strikeout inlines) = pure $ Span attrs inlines
   where
     attrs = ("", [], [("style", "text-decoration: line-through;")])
@@ -132,5 +134,27 @@ parseMacro = parseMaybe parser
 
     macroOptP :: ConfluenceMdParser MacroOption
     macroOptP = liftM2 (,) keyP (char '=' *> valueP)
+
+-- | @parseJira text@ attempts to parse a string representing a jira identifier.
+--
+-- Examples:
+--
+-- >>> parseJira "ABC-123"
+-- Just "ABC-123"
+--
+-- >>> parseJira "abc-123"
+-- Nothing
+--
+-- >>> parseJira "ABC-1foobar"
+-- Nothing
+parseJira :: T.Text -> Maybe T.Text
+parseJira = parseMaybe parser
+  where
+    parser :: ConfluenceMdParser T.Text
+    parser = do
+        spaceKey <- T.pack <$> some upperChar
+        _ <- char '-'
+        number <- T.pack <$> some digitChar
+        pure $ spaceKey <> "-" <> number
 
 --------------------------------------------------------------------------------
